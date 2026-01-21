@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatbot Juridique CEJ</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; display: flex; justify-content: center; padding-top: 50px; }
+        #chat-container { background: #fff; padding: 20px; border-radius: 8px; width: 400px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
+        #chat-box { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; margin-bottom: 10px; }
+        #user-input { width: 80%; padding: 8px; }
+        #send-btn { width: 18%; padding: 8px; background: #007bff; color: #fff; border: none; cursor: pointer; }
+        .bot-msg { color: #007bff; margin: 5px 0; }
+        .user-msg { color: #333; margin: 5px 0; text-align: right; }
+        .theme-btn { margin: 2px; padding: 5px 10px; cursor: pointer; background: #eee; border: 1px solid #ccc; border-radius: 4px;}
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div>
+            <button class="theme-btn" onclick="askTheme('Droit Civil')">Droit Civil</button>
+            <button class="theme-btn" onclick="askTheme('Droit Administratif')">Droit Administratif</button>
+            <button class="theme-btn" onclick="askTheme('Institutions')">Institutions</button>
+        </div>
+        <div id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Pose ta question ici...">
+        <button id="send-btn">Envoyer</button>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        const responses = {
+            "Droit Civil": "Le droit civil régit les relations entre les personnes et leurs biens (ex: contrats, responsabilité).",
+            "Droit Administratif": "Le droit administratif organise les rapports entre l'administration et les citoyens.",
+            "Institutions": "Les institutions françaises incluent le Parlement, le Gouvernement et le Conseil Constitutionnel."
+        };
+
+        const faq = {
+            "qu'est-ce qu'un contrat": "Un contrat est un accord entre deux ou plusieurs parties qui crée des obligations.",
+            "différence loi et règlement": "La loi est votée par le Parlement; le règlement est édicté par le Gouvernement ou l'administration.",
+            "rôle du juge administratif": "Le juge administratif contrôle la légalité des actes de l'administration.",
+            "responsabilité civile": "La responsabilité civile oblige à réparer un dommage causé à autrui."
+        };
+
+        function addMessage(msg, sender) {
+            const div = document.createElement('div');
+            div.textContent = msg;
+            div.className = sender === 'bot' ? 'bot-msg' : 'user-msg';
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function askTheme(theme) {
+            addMessage(theme, 'user');
+            addMessage(responses[theme], 'bot');
+        }
+
+        function askQuestion(question) {
+            addMessage(question, 'user');
+            question = question.toLowerCase();
+            let answered = false;
+            for (let key in faq) {
+                if (question.includes(key)) {
+                    addMessage(faq[key], 'bot');
+                    answered = true;
+                    break;
+                }
+            }
+            if (!answered) {
+                addMessage("Je n'ai pas la réponse pour ça pour le moment.", 'bot');
+            }
+        }
+
+        sendBtn.addEventListener('click', () => {
+            const question = userInput.value.trim();
+            if (question) askQuestion(question);
+            userInput.value = '';
+        });
+
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendBtn.click();
+        });
+    </script>
+</body>
+</html>
